@@ -27,7 +27,6 @@ class _HomeState extends State<Home> {
       ),
       drawer: NavDrawer(),
       body: Container(
-        margin: MediaQuery.of(context).padding,
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
