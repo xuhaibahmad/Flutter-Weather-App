@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import '../views/nav_drawer_icon.dart';
 import '../views/nav_drawer.dart';
-import '../views/next_day_mini_forecast.dart';
-import '../views/temperature_text.dart';
 import '../models/forecast.dart';
 import '../models/weather_icon.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import '../utils/secrets_loader.dart';
 import '../data/weather_api.dart';
+import 'dart:math';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
+import '../views/forecast.dart';
 
 const API_KEY = "OpenWeatherApiKey";
 const SECRETS_FILE_PATH = "assets/secrets.json";
@@ -26,6 +26,10 @@ class _HomeState extends State<Home> {
   String nextTemperature = "";
   String nextIcon = WeatherIcon.getDefault();
 
+  final random = new Random();
+  double nextInRange(int min, int max) =>
+      min + random.nextInt(max - min).toDouble();
+
   @override
   void initState() {
     super.initState();
@@ -34,7 +38,9 @@ class _HomeState extends State<Home> {
         .then((secrets) {
           final apiKey = secrets[API_KEY];
           final weatherApi = WeatherApi(apiKey);
-          return weatherApi.getWeatherForecast(33.44, -94.04);
+          final lat = nextInRange(-90, 90);
+          final lng = nextInRange(-180, 180);
+          return weatherApi.getWeatherForecast(lat, lng);
         })
         .then((value) => updateForecast(value))
         .catchError((e) => showInSnackBar(e.message));
@@ -44,10 +50,15 @@ class _HomeState extends State<Home> {
     setState(() {
       final weather = forecast.current.weather.first;
       final tomorrow = forecast.daily.first;
-      this.description = weather.main;
+      // Since we are using timezone to display the location name,
+      // we need to clean up the string a little bit. This includes
+      // splitting the location name from the timezone string
+      // (usually in AREA/LOCATION format). We also remove all the
+      // symbols from the text.
       String timezone = forecast.timezone;
       timezone = timezone.contains("/") ? timezone.split("/").last : timezone;
-      this.location = timezone;
+      this.location = timezone.replaceAll(new RegExp(r'[^\w\s]+'), '');
+      this.description = weather.main;
       this.temperature = forecast.current.temp.toInt().toString();
       this.icon = WeatherIcon.getForWeather(weather.icon);
       this.nextTemperature = tomorrow.temp.day.toInt().toString();
@@ -71,57 +82,27 @@ class _HomeState extends State<Home> {
         ),
       ),
       drawer: NavDrawer(),
-      body: Container(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Column(
-              children: [
-                Text(
-                  this.description,
-                  style: TextStyle(
-                    fontSize: 40.0,
-                    color: Colors.black87,
-                    fontWeight: FontWeight.w400,
-                  ),
-                ),
-                Text(
-                  this.location,
-                  style: TextStyle(
-                    fontSize: 20.0,
-                    color: Colors.black38,
-                    fontWeight: FontWeight.w400,
-                  ),
-                ),
-              ],
-            ),
-            Visibility(
-              visible: this.temperature.isNotEmpty,
-              child: Column(
-                children: [
-                  SvgPicture.asset(
-                    this.icon,
-                    width: 300,
-                    height: 300,
-                  ),
-                  SizedBox(
-                    height: 16,
-                  ),
-                  TemperatureText(
-                    text: this.temperature,
-                    fontSize: 40.0,
-                  ),
-                ],
-              ),
-            ),
-            NextDayMiniForecast(
-              temperature: this.nextTemperature,
-              icon: this.nextIcon,
-            ),
-          ],
-        ),
-      ),
+      body: this.temperature.isNotEmpty
+          ? buildForecastContent()
+          : buildProgressBar(),
     );
+  }
+
+  SpinKitPulse buildProgressBar() {
+    return SpinKitPulse(
+      color: Colors.black38,
+      size: 150.0,
+    );
+  }
+
+  ForecastWidget buildForecastContent() {
+    return ForecastWidget(
+        description: description,
+        location: location,
+        temperature: temperature,
+        icon: icon,
+        nextTemperature: nextTemperature,
+        nextIcon: nextIcon);
   }
 
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
