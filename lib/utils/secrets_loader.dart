@@ -7,25 +7,10 @@ class SecretLoader {
 
   SecretLoader({this.secretPath});
 
-  Future<List<Secret>> load() {
-    return rootBundle.loadStructuredData<List<Secret>>(
+  Future<Map> load() {
+    return rootBundle.loadStructuredData<Map>(
       this.secretPath,
-      (jsonStr) async => (json.decode(jsonStr) as Map)
-          .entries
-          .map((entry) => Secret.fromJson(entry))
-          .toList(),
+      (jsonStr) async => (json.decode(jsonStr) as Map),
     );
   }
-}
-
-class Secret {
-  final String key;
-  final String value;
-
-  Secret({this.key = "", this.value = ""});
-
-  factory Secret.fromJson(MapEntry entry) => Secret(
-        key: entry.key,
-        value: entry.value,
-      );
 }

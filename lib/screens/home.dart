@@ -1,9 +1,16 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_icons/flutter_icons.dart';
-import './nav_drawer_icon.dart';
-import './nav_drawer.dart';
-import './next_day_mini_forecast.dart';
-import './temperature_text.dart';
+import '../views/nav_drawer_icon.dart';
+import '../views/nav_drawer.dart';
+import '../views/next_day_mini_forecast.dart';
+import '../views/temperature_text.dart';
+import '../models/forecast.dart';
+import '../models/weather_icon.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import '../utils/secrets_loader.dart';
+import '../data/weather_api.dart';
+
+const API_KEY = "OpenWeatherApiKey";
+const SECRETS_FILE_PATH = "assets/secrets.json";
 
 class Home extends StatefulWidget {
   @override
@@ -11,11 +18,49 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
+  String errorMessage = "";
+  String description = "";
+  String location = "";
+  String temperature = "";
+  String icon = WeatherIcon.getDefault();
+  String nextTemperature = "";
+  String nextIcon = WeatherIcon.getDefault();
+
+  @override
+  void initState() {
+    super.initState();
+    SecretLoader(secretPath: SECRETS_FILE_PATH)
+        .load()
+        .then((secrets) {
+          final apiKey = secrets[API_KEY];
+          final weatherApi = WeatherApi(apiKey);
+          return weatherApi.getWeatherForecast(33.44, -94.04);
+        })
+        .then((value) => updateForecast(value))
+        .catchError((e) => showInSnackBar(e.message));
+  }
+
+  updateForecast(Forecast forecast) {
+    setState(() {
+      final weather = forecast.current.weather.first;
+      final tomorrow = forecast.daily.first;
+      this.description = weather.main;
+      String timezone = forecast.timezone;
+      timezone = timezone.contains("/") ? timezone.split("/").last : timezone;
+      this.location = timezone;
+      this.temperature = forecast.current.temp.toInt().toString();
+      this.icon = WeatherIcon.getForWeather(weather.icon);
+      this.nextTemperature = tomorrow.temp.day.toInt().toString();
+      this.nextIcon = WeatherIcon.getForWeather(tomorrow.weather.first.icon);
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     final menuIcon = 'assets/menu.svg';
     final menuIconSize = 24.0;
     return Scaffold(
+      key: _scaffoldKey,
       backgroundColor: Colors.white,
       appBar: AppBar(
         backgroundColor: Colors.white,
@@ -33,7 +78,7 @@ class _HomeState extends State<Home> {
             Column(
               children: [
                 Text(
-                  'Sunny',
+                  this.description,
                   style: TextStyle(
                     fontSize: 40.0,
                     color: Colors.black87,
@@ -41,7 +86,7 @@ class _HomeState extends State<Home> {
                   ),
                 ),
                 Text(
-                  'New York',
+                  this.location,
                   style: TextStyle(
                     fontSize: 20.0,
                     color: Colors.black38,
@@ -50,23 +95,38 @@ class _HomeState extends State<Home> {
                 ),
               ],
             ),
-            Column(
-              children: [
-                Icon(
-                  FlutterIcons.circle_faw,
-                  color: Colors.yellow,
-                  size: 330,
-                ),
-                TemperatureText(
-                  text: "28",
-                  fontSize: 40.0,
-                ),
-              ],
+            Visibility(
+              visible: this.temperature.isNotEmpty,
+              child: Column(
+                children: [
+                  SvgPicture.asset(
+                    this.icon,
+                    width: 300,
+                    height: 300,
+                  ),
+                  SizedBox(
+                    height: 16,
+                  ),
+                  TemperatureText(
+                    text: this.temperature,
+                    fontSize: 40.0,
+                  ),
+                ],
+              ),
             ),
-            NextDayMiniForecast(),
+            NextDayMiniForecast(
+              temperature: this.nextTemperature,
+              icon: this.nextIcon,
+            ),
           ],
         ),
       ),
     );
+  }
+
+  final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
+
+  void showInSnackBar(String message) {
+    _scaffoldKey.currentState.showSnackBar(SnackBar(content: Text(message)));
   }
 }
