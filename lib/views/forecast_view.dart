@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../views/next_day_mini_forecast.dart';
+import '../views/mini_forecast_view.dart';
 import '../views/temperature_text.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 

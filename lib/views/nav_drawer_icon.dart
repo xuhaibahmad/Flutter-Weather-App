@@ -2,14 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 class NavDrawerIcon extends StatelessWidget {
-  const NavDrawerIcon({
+  final String menuIcon;
+  final double iconSize;
+  final Function onPressed;
+
+  NavDrawerIcon({
     Key key,
     @required this.menuIcon,
     @required this.iconSize,
+    this.onPressed,
   }) : super(key: key);
-
-  final String menuIcon;
-  final double iconSize;
 
   @override
   Widget build(BuildContext context) {
@@ -21,7 +23,7 @@ class NavDrawerIcon extends StatelessWidget {
           height: iconSize,
           color: Colors.black87,
         ),
-        onPressed: () => Scaffold.of(context).openDrawer(),
+        onPressed: onPressed,
       ),
     );
   }

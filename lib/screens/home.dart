@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import '../views/nav_drawer_icon.dart';
-import '../views/nav_drawer.dart';
 import '../models/forecast.dart';
 import '../models/weather_icon.dart';
 import '../utils/secrets_loader.dart';
 import '../data/weather_api.dart';
 import 'dart:math';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
-import '../views/forecast.dart';
+import '../views/forecast_view.dart';
+import './weather_settings.dart';
 
 const API_KEY = "OpenWeatherApiKey";
 const SECRETS_FILE_PATH = "assets/secrets.json";
@@ -25,6 +25,8 @@ class _HomeState extends State<Home> {
   String icon = WeatherIcon.getDefault();
   String nextTemperature = "";
   String nextIcon = WeatherIcon.getDefault();
+
+  final bottomSheet = WeatherSettingsSheet();
 
   final random = new Random();
   double nextInRange(int min, int max) =>
@@ -72,6 +74,7 @@ class _HomeState extends State<Home> {
     final menuIconSize = 24.0;
     return Scaffold(
       key: _scaffoldKey,
+      resizeToAvoidBottomInset: false,
       backgroundColor: Colors.white,
       appBar: AppBar(
         backgroundColor: Colors.white,
@@ -79,9 +82,10 @@ class _HomeState extends State<Home> {
         leading: NavDrawerIcon(
           menuIcon: menuIcon,
           iconSize: menuIconSize,
+          onPressed: () => bottomSheet.show(context),
         ),
       ),
-      drawer: NavDrawer(),
+      //drawer: NavDrawer(),
       body: this.temperature.isNotEmpty
           ? buildForecastContent()
           : buildProgressBar(),
