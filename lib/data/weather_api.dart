@@ -5,9 +5,11 @@ import 'dart:convert';
 const String BASE_URL = "https://api.openweathermap.org/data/2.5/onecall";
 
 class WeatherApi {
-  final String apiKey;
+  String apiKey;
 
-  WeatherApi(this.apiKey);
+  setApiKey(String key) {
+    this.apiKey = key;
+  }
 
   Future<Forecast> getWeatherForecast(double lat, double lng) async {
     final String url = "$BASE_URL?lat=$lat&lon=$lng&appid=$apiKey&units=metric";

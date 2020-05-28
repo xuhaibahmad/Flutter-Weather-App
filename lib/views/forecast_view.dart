@@ -1,24 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_weather_app/models/forecast_viewmodel.dart';
 import '../views/mini_forecast_view.dart';
 import '../views/temperature_text.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 class ForecastWidget extends StatelessWidget {
-  final String description;
-  final String location;
-  final String temperature;
-  final String icon;
-  final String nextTemperature;
-  final String nextIcon;
+  final ForecastViewModel viewModel;
 
   const ForecastWidget({
     Key key,
-    @required this.description,
-    @required this.location,
-    @required this.temperature,
-    @required this.icon,
-    @required this.nextTemperature,
-    @required this.nextIcon,
+    @required this.viewModel,
   }) : super(key: key);
 
   @override
@@ -30,7 +21,7 @@ class ForecastWidget extends StatelessWidget {
           Column(
             children: [
               Text(
-                this.description,
+                viewModel.description,
                 style: TextStyle(
                   fontSize: 40.0,
                   color: Colors.black87,
@@ -38,7 +29,7 @@ class ForecastWidget extends StatelessWidget {
                 ),
               ),
               Text(
-                this.location,
+                viewModel.location,
                 style: TextStyle(
                   fontSize: 20.0,
                   color: Colors.black38,
@@ -48,11 +39,11 @@ class ForecastWidget extends StatelessWidget {
             ],
           ),
           Visibility(
-            visible: this.temperature.isNotEmpty,
+            visible: viewModel.temperature.isNotEmpty,
             child: Column(
               children: [
                 SvgPicture.asset(
-                  this.icon,
+                  viewModel.icon,
                   width: 300,
                   height: 300,
                 ),
@@ -60,15 +51,15 @@ class ForecastWidget extends StatelessWidget {
                   height: 16,
                 ),
                 TemperatureText(
-                  text: this.temperature,
+                  text: viewModel.temperature,
                   fontSize: 40.0,
                 ),
               ],
             ),
           ),
           NextDayMiniForecast(
-            temperature: this.nextTemperature,
-            icon: this.nextIcon,
+            temperature: viewModel.nextTemperature,
+            icon: viewModel.nextIcon,
           ),
         ],
       ),
