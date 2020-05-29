@@ -33,6 +33,7 @@ dependencies:
   mobx: ^0.3.10
   flutter_mobx: ^0.3.4+1
   provider: ^3.2.0
+  shared_preferences: ^0.5.7+3
 
 dev_dependencies:
   flutter_test:

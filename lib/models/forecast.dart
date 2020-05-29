@@ -3,24 +3,18 @@ part 'forecast.g.dart';
 
 @JsonSerializable()
 class Forecast {
-  double lat;
-  double lon;
-  String timezone;
-  int timezoneOffset;
-  Current current;
-  List<Minutely> minutely;
-  List<Hourly> hourly;
-  List<Daily> daily;
+  String cod;
+  double message;
+  int cnt;
+  List<ListElement> list;
+  City city;
 
   Forecast({
-    this.lat,
-    this.lon,
-    this.timezone,
-    this.timezoneOffset,
-    this.current,
-    this.minutely,
-    this.hourly,
-    this.daily,
+    this.cod,
+    this.message,
+    this.cnt,
+    this.list,
+    this.city,
   });
 
   factory Forecast.fromJson(Map<String, dynamic> json) =>
@@ -30,59 +24,137 @@ class Forecast {
 }
 
 @JsonSerializable()
-class Current {
-  int dt;
-  int sunrise;
-  int sunset;
-  double temp;
-  double feelsLike;
-  int pressure;
-  int humidity;
-  double dewPoint;
-  double uvi;
-  int clouds;
-  int visibility;
-  double windSpeed;
-  int windDeg;
-  List<Weather> weather;
-  Rain rain;
+class City {
+  int id;
+  String name;
+  Coord coord;
+  String country;
 
-  Current({
-    this.dt,
-    this.sunrise,
-    this.sunset,
-    this.temp,
-    this.feelsLike,
-    this.pressure,
-    this.humidity,
-    this.dewPoint,
-    this.uvi,
-    this.clouds,
-    this.visibility,
-    this.windSpeed,
-    this.windDeg,
-    this.weather,
-    this.rain,
+  City({
+    this.id,
+    this.name,
+    this.coord,
+    this.country,
   });
 
-  factory Current.fromJson(Map<String, dynamic> json) =>
-      _$CurrentFromJson(json);
+  factory City.fromJson(Map<String, dynamic> json) => _$CityFromJson(json);
 
-  Map<String, dynamic> toJson() => _$CurrentToJson(this);
+  Map<String, dynamic> toJson() => _$CityToJson(this);
+}
+
+@JsonSerializable()
+class Coord {
+  double lat;
+  double lon;
+
+  Coord({
+    this.lat,
+    this.lon,
+  });
+
+  factory Coord.fromJson(Map<String, dynamic> json) => _$CoordFromJson(json);
+
+  Map<String, dynamic> toJson() => _$CoordToJson(this);
+}
+
+@JsonSerializable()
+class ListElement {
+  int dt;
+  MainClass main;
+  List<Weather> weather;
+  Clouds clouds;
+  Wind wind;
+  Sys sys;
+  String dtTxt;
+  Rain rain;
+  Rain snow;
+
+  ListElement({
+    this.dt,
+    this.main,
+    this.weather,
+    this.clouds,
+    this.wind,
+    this.sys,
+    this.dtTxt,
+    this.rain,
+    this.snow,
+  });
+
+  factory ListElement.fromJson(Map<String, dynamic> json) =>
+      _$ListElementFromJson(json);
+
+  Map<String, dynamic> toJson() => _$ListElementToJson(this);
+}
+
+@JsonSerializable()
+class Clouds {
+  int all;
+
+  Clouds({
+    this.all,
+  });
+
+  factory Clouds.fromJson(Map<String, dynamic> json) => _$CloudsFromJson(json);
+
+  Map<String, dynamic> toJson() => _$CloudsToJson(this);
+}
+
+@JsonSerializable()
+class MainClass {
+  double temp;
+  double tempMin;
+  double tempMax;
+  double pressure;
+  double seaLevel;
+  double grndLevel;
+  int humidity;
+  double tempKf;
+
+  MainClass({
+    this.temp,
+    this.tempMin,
+    this.tempMax,
+    this.pressure,
+    this.seaLevel,
+    this.grndLevel,
+    this.humidity,
+    this.tempKf,
+  });
+
+  factory MainClass.fromJson(Map<String, dynamic> json) =>
+      _$MainClassFromJson(json);
+
+  Map<String, dynamic> toJson() => _$MainClassToJson(this);
 }
 
 @JsonSerializable()
 class Rain {
-  double the1H;
+  double the3H;
 
   Rain({
-    this.the1H,
+    this.the3H,
   });
 
   factory Rain.fromJson(Map<String, dynamic> json) => _$RainFromJson(json);
 
   Map<String, dynamic> toJson() => _$RainToJson(this);
 }
+
+@JsonSerializable()
+class Sys {
+  Pod pod;
+
+  Sys({
+    this.pod,
+  });
+
+  factory Sys.fromJson(Map<String, dynamic> json) => _$SysFromJson(json);
+
+  Map<String, dynamic> toJson() => _$SysToJson(this);
+}
+
+enum Pod { d, n }
 
 @JsonSerializable()
 class Weather {
@@ -105,132 +177,16 @@ class Weather {
 }
 
 @JsonSerializable()
-class Daily {
-  int dt;
-  int sunrise;
-  int sunset;
-  Temp temp;
-  FeelsLike feelsLike;
-  int pressure;
-  int humidity;
-  double dewPoint;
-  double windSpeed;
-  int windDeg;
-  List<Weather> weather;
-  int clouds;
-  double rain;
-  double uvi;
+class Wind {
+  double speed;
+  double deg;
 
-  Daily({
-    this.dt,
-    this.sunrise,
-    this.sunset,
-    this.temp,
-    this.feelsLike,
-    this.pressure,
-    this.humidity,
-    this.dewPoint,
-    this.windSpeed,
-    this.windDeg,
-    this.weather,
-    this.clouds,
-    this.rain,
-    this.uvi,
+  Wind({
+    this.speed,
+    this.deg,
   });
 
-  factory Daily.fromJson(Map<String, dynamic> json) => _$DailyFromJson(json);
+  factory Wind.fromJson(Map<String, dynamic> json) => _$WindFromJson(json);
 
-  Map<String, dynamic> toJson() => _$DailyToJson(this);
-}
-
-@JsonSerializable()
-class FeelsLike {
-  double day;
-  double night;
-  double eve;
-  double morn;
-
-  FeelsLike({
-    this.day,
-    this.night,
-    this.eve,
-    this.morn,
-  });
-
-  factory FeelsLike.fromJson(Map<String, dynamic> json) =>
-      _$FeelsLikeFromJson(json);
-
-  Map<String, dynamic> toJson() => _$FeelsLikeToJson(this);
-}
-
-@JsonSerializable()
-class Temp {
-  double day;
-  double min;
-  double max;
-  double night;
-  double eve;
-  double morn;
-
-  Temp({
-    this.day,
-    this.min,
-    this.max,
-    this.night,
-    this.eve,
-    this.morn,
-  });
-
-  factory Temp.fromJson(Map<String, dynamic> json) => _$TempFromJson(json);
-
-  Map<String, dynamic> toJson() => _$TempToJson(this);
-}
-
-@JsonSerializable()
-class Hourly {
-  int dt;
-  double temp;
-  double feelsLike;
-  int pressure;
-  int humidity;
-  double dewPoint;
-  int clouds;
-  double windSpeed;
-  int windDeg;
-  List<Weather> weather;
-  Rain rain;
-
-  Hourly({
-    this.dt,
-    this.temp,
-    this.feelsLike,
-    this.pressure,
-    this.humidity,
-    this.dewPoint,
-    this.clouds,
-    this.windSpeed,
-    this.windDeg,
-    this.weather,
-    this.rain,
-  });
-
-  factory Hourly.fromJson(Map<String, dynamic> json) => _$HourlyFromJson(json);
-
-  Map<String, dynamic> toJson() => _$HourlyToJson(this);
-}
-
-@JsonSerializable()
-class Minutely {
-  int dt;
-  double precipitation;
-
-  Minutely({
-    this.dt,
-    this.precipitation,
-  });
-
-  factory Minutely.fromJson(Map<String, dynamic> json) =>
-      _$MinutelyFromJson(json);
-
-  Map<String, dynamic> toJson() => _$MinutelyToJson(this);
+  Map<String, dynamic> toJson() => _$WindToJson(this);
 }

@@ -31,12 +31,14 @@ class _HomeState extends State<Home> {
         (message) => showInSnackBar(message),
       )
     ];
+    store.assignPrefs();
     store.getForecast();
   }
 
   @override
   void dispose() {
     _disposers.forEach((disposer) => disposer());
+    bottomSheet.dispose();
     super.dispose();
   }
 
@@ -54,7 +56,10 @@ class _HomeState extends State<Home> {
         leading: NavDrawerIcon(
           menuIcon: menuIcon,
           iconSize: menuIconSize,
-          onPressed: () => bottomSheet.show(context),
+          onPressed: () => bottomSheet.show(
+            context,
+            (city, unit) => onSubmit(city, unit),
+          ),
         ),
       ),
       //drawer: NavDrawer(),
@@ -73,6 +78,13 @@ class _HomeState extends State<Home> {
         },
       ),
     );
+  }
+
+  onSubmit(city, unit) {
+    store.updateCity(city);
+    store.updateUnit(unit);
+    store.getForecast();
+    Navigator.pop(context);
   }
 
   showInSnackBar(String message) {

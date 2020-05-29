@@ -1,13 +1,26 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_weather_app/data/weather_api.dart';
 import '../views/bottom_sheet_toggle.dart';
 
 class WeatherSettingsSheet {
+  final controller = TextEditingController();
   List<bool> isSelected = [true, false];
+  String unit = CELCIUS;
 
-  show(context) {
+  show(
+    BuildContext context,
+    String defaultCity,
+    String defaultUnit,
+    Function onSubmit,
+  ) {
+    final isCelcius = unit == CELCIUS;
+    controller.text = defaultCity;
+    isSelected = [isCelcius, !isCelcius];
     showModalBottomSheet(
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.vertical(top: Radius.circular(25.0)),
+          borderRadius: BorderRadius.vertical(
+            top: Radius.circular(25.0),
+          ),
         ),
         context: context,
         isScrollControlled: true,
@@ -16,12 +29,18 @@ class WeatherSettingsSheet {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisSize: MainAxisSize.min,
-                children: buildSheetItems(context),
+                children: buildSheetItems(
+                  context,
+                  onSubmit,
+                ),
               ),
             ));
   }
 
-  List<Widget> buildSheetItems(BuildContext context) {
+  List<Widget> buildSheetItems(
+    BuildContext context,
+    Function onSubmit,
+  ) {
     return [
       Text(
         "Preferences",
@@ -53,7 +72,7 @@ class WeatherSettingsSheet {
             SizedBox(
               width: double.infinity,
               child: RaisedButton(
-                onPressed: () => onSubmit(context),
+                onPressed: () => onSubmit(controller.text, unit),
                 color: Colors.lightBlue,
                 textColor: Colors.white,
                 child: Text("SAVE"),
@@ -65,13 +84,9 @@ class WeatherSettingsSheet {
     ];
   }
 
-  onSubmit(BuildContext context) {
-    print("Saved!");
-    Navigator.pop(context);
-  }
-
   Widget buildCityInput() {
     return TextField(
+      controller: controller,
       decoration: InputDecoration(
         focusedBorder: OutlineInputBorder(
           borderSide: BorderSide(color: Colors.grey),
@@ -90,8 +105,12 @@ class WeatherSettingsSheet {
     return BottomSheetToggleButtons(
       selections: isSelected,
       valueChanged: (value) {
-        print("Unit Selected: $value");
+        unit = value == 0 ? CELCIUS : FAHRENHEIT;
       },
     );
+  }
+
+  dispose() {
+    controller.dispose();
   }
 }

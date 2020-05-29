@@ -1,5 +1,6 @@
 import 'package:flutter_weather_app/models/forecast.dart';
 import 'package:flutter_weather_app/models/weather_icon.dart';
+import '../utils/string_ext.dart';
 
 class ForecastViewModel {
   final String errorMessage;
@@ -21,21 +22,23 @@ class ForecastViewModel {
   });
 
   factory ForecastViewModel.fromForecast(Forecast forecast) {
-    final weather = forecast.current.weather.first;
-    final tomorrow = forecast.daily.first;
+    final today = forecast.list.first;
+    final todayDate = DateTime.fromMillisecondsSinceEpoch(today.dt * 1000);
+    final tomorrow = forecast.list.firstWhere((f) {
+      final nextDate = DateTime.fromMillisecondsSinceEpoch(f.dt * 1000);
+      return todayDate.difference(nextDate).inDays == -1;
+    });
     // Since we are using timezone to display the location name,
     // we need to clean up the string a little bit. This includes
     // splitting the location name from the timezone string
     // (usually in AREA/LOCATION format). We also remove all the
     // symbols from the text.
-    String timezone = forecast.timezone;
-    timezone = timezone.contains("/") ? timezone.split("/").last : timezone;
     return ForecastViewModel(
-      location: timezone.replaceAll(new RegExp(r'[^\w\s]+'), ''),
-      description: weather.main,
-      temperature: forecast.current.temp.toInt().toString(),
-      icon: WeatherIcon.getForWeather(weather.icon),
-      nextTemperature: tomorrow.temp.day.toInt().toString(),
+      location: forecast.city.name,
+      description: today.weather.first.description.capitalizeWords(),
+      temperature: today.main.temp.round().toString(),
+      icon: WeatherIcon.getForWeather(today.weather.first.icon),
+      nextTemperature: tomorrow.main.temp.round().toString(),
       nextIcon: WeatherIcon.getForWeather(tomorrow.weather.first.icon),
     );
   }

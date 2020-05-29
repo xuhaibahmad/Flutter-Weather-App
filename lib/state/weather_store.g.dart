@@ -72,4 +72,17 @@ mixin _$WeatherStore on _WeatherStore, Store {
   Future getForecast() {
     return _$getForecastAsyncAction.run(() => super.getForecast());
   }
+
+  final _$_WeatherStoreActionController =
+      ActionController(name: '_WeatherStore');
+
+  @override
+  dynamic updateCity(String city) {
+    final _$actionInfo = _$_WeatherStoreActionController.startAction();
+    try {
+      return super.updateCity(city);
+    } finally {
+      _$_WeatherStoreActionController.endAction(_$actionInfo);
+    }
+  }
 }

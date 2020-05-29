@@ -1,12 +1,9 @@
-import 'dart:io';
-
 import 'package:flutter_weather_app/data/weather_api.dart';
 import 'package:flutter_weather_app/models/forecast.dart';
 import 'package:flutter_weather_app/models/forecast_viewmodel.dart';
-import 'package:flutter_weather_app/screens/home.dart';
-import 'package:flutter_weather_app/utils/math_utils.dart';
 import 'package:flutter_weather_app/utils/secrets_loader.dart';
 import 'package:mobx/mobx.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 part 'weather_store.g.dart';
 
@@ -21,8 +18,15 @@ enum StoreState { initial, loading, loaded }
 
 abstract class _WeatherStore with Store {
   final WeatherApi api;
+  SharedPreferences prefs;
 
   _WeatherStore(this.api);
+
+  assignPrefs() async {
+    if (prefs == null) {
+      prefs = await SharedPreferences.getInstance();
+    }
+  }
 
   @observable
   ObservableFuture<Forecast> _forecastFuture;
@@ -44,6 +48,26 @@ abstract class _WeatherStore with Store {
         : StoreState.loaded;
   }
 
+  @computed
+  String get city {
+    return prefs.getString("city") ?? "";
+  }
+
+  @computed
+  String get unit {
+    return prefs.getString("unit") ?? "";
+  }
+
+  @action
+  updateCity(String city) async {
+    prefs.setString("city", city);
+  }
+
+  @action
+  updateUnit(String unit) async {
+    prefs.setString("unit", unit);
+  }
+
   @action
   Future getForecast() async {
     error = null;
@@ -52,9 +76,7 @@ abstract class _WeatherStore with Store {
       final apiKey = secrets[API_KEY];
       api.setApiKey(apiKey);
     }
-    final lat = nextInRange(-90, 90);
-    final lng = nextInRange(-180, 180);
-    _forecastFuture = ObservableFuture(api.getWeatherForecast(lat, lng));
+    _forecastFuture = ObservableFuture(api.getWeatherForecast(city, unit));
     try {
       final forecast = await _forecastFuture;
       forecastViewModel = ForecastViewModel.fromForecast(forecast);
