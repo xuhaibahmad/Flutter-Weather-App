@@ -1,6 +1,6 @@
 # Flutter Weather
 
-<img src="screenshots/screenshot.png" alt="screenshot" width="540" height="1080"/>
+<img src="screenshots/screenshot.png" alt="screenshot" width="270" height="540"/>
 
 ## Table of Contents
 
@@ -25,7 +25,7 @@ The project uses [OpenWeather](https://openweathermap.org/) API, you will need t
 
 ## Contributing
 
-PRs and Issues are welcomed. Just note that I won't be putting the app on Play Store.
+PRs and Issues are always welcomed.
 
 ## Credits
 
