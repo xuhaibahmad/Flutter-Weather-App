@@ -1,6 +1,6 @@
 # Flutter Weather
 
-![Screenshot](screenshots/screenshot.png)
+![Screenshot](screenshots/screenshot.png =540x1080)
 
 ## Table of Contents
 
@@ -11,7 +11,7 @@
 
 ## About
 
-A minimalistic weather app built as part of a portfolio item. The main purpose of this project is to learn Flutter and apply best practices to it. While the app is functional, it should only be used as a reference project.
+A minimalist weather app built as part of a portfolio item. The main purpose of this project is to learn Flutter and apply best practices to it. While the app is functional, it should only be used as a reference project.
 
 ## Getting Started
 
