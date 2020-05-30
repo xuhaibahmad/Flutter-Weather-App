@@ -1,17 +1,32 @@
-# flutter_weather_app
+# Flutter Weather
 
-A new Flutter project.
+![Screenshot](screenshots/screenshot.png)
+
+## Table of Contents
+
+- [About](#about)
+- [Getting Started](#getting_started)
+- [Usage](#usage)
+- [Contributing](#contributing)
+
+## About
+
+A minimalistic weather app built as part of a portfolio item. The main purpose of this project is to learn Flutter and apply best practices to it. While the app is functional, it should only be used as a reference project.
 
 ## Getting Started
 
-This project is a starting point for a Flutter application.
+The project uses [OpenWeather](https://openweathermap.org/) API, you will need to get your own key and store it inside `secrets.json` file inside the `assets` directory. Here's an example of what the file should look like:
 
-A few resources to get you started if this is your first Flutter project:
+```
+{
+    "OpenWeatherApiKey": "Your Key"
+}
+```
 
-- [Lab: Write your first Flutter app](https://flutter.dev/docs/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://flutter.dev/docs/cookbook)
+## Contributing
 
-For help getting started with Flutter, view our
-[online documentation](https://flutter.dev/docs), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
-# Flutter-Weather-App
+PRs and Issues are welcomed. Just note that I won't be putting the app on Play Store.
+
+## Credits
+
+Design Inspiration: [Weather app Concept by Tung Tran](https://www.uplabs.com/posts/weather-app-concept-part-1)
