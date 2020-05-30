@@ -16,14 +16,14 @@ class WeatherApi {
   }
 
   Future<Forecast> getWeatherForecast(String city, String unit) async {
-    final cityValue = city.toLowerCase().replaceAll(' ', '');
+    final cityValue = city.toLowerCase();
     final unitValue = unit == CELCIUS ? METRIC : IMPERIAL;
     final url = "$BASE_URL?q=$cityValue&appid=$apiKey&units=$unitValue";
-    final response = await http.get(url);
+    final response = await http.get(Uri.encodeFull(url));
     if (response.statusCode == 200) {
       return Forecast.fromJson(json.decode(response.body));
     } else {
-      throw Exception("Error occurred while fetching weather forecast");
+      throw Exception();
     }
   }
 }

@@ -6,4 +6,8 @@ extension StringExtension on String {
         .map((s) => s[0].toUpperCase() + s.substring(1))
         .join(' ');
   }
+
+  String removeWhitespaces() {
+    return this.replaceAll(new RegExp(r"\s+\b|\b\s"), "");
+  }
 }

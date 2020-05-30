@@ -1,8 +1,9 @@
+import 'package:equatable/equatable.dart';
 import 'package:flutter_weather_app/models/forecast.dart';
 import 'package:flutter_weather_app/models/weather_icon.dart';
 import '../utils/string_ext.dart';
 
-class ForecastViewModel {
+class ForecastViewModel extends Equatable {
   final String errorMessage;
   final String description;
   final String location;
@@ -42,4 +43,15 @@ class ForecastViewModel {
       nextIcon: WeatherIcon.getForWeather(tomorrow.weather.first.icon),
     );
   }
+
+  @override
+  List<Object> get props => [
+        errorMessage,
+        description,
+        location,
+        temperature,
+        icon,
+        nextTemperature,
+        nextIcon,
+      ];
 }
