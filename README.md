@@ -1,6 +1,6 @@
 # Flutter Weather
 
-![Screenshot](screenshots/screenshot.png =540x1080)
+<img src="screenshots/screenshot.png" alt="screenshot" width="540" height="1080"/>
 
 ## Table of Contents
 
