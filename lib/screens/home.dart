@@ -1,24 +1,54 @@
+import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:flutter_weather_app/bloc/weather/weather_bloc.dart';
 import 'package:flutter_weather_app/bloc/weather_settings/weather_settings_bloc.dart';
-import 'package:flutter_weather_app/models/forecast_viewmodel.dart';
+import 'package:flutter_weather_app/data/weather_repository.dart';
+import 'package:flutter_weather_app/router/router.gr.dart';
 import '../views/nav_drawer_icon.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import '../views/forecast_view.dart';
 import './weather_settings.dart';
 
-class Home extends StatelessWidget {
+class Home extends StatefulWidget implements AutoRouteWrapper {
+  final WeatherRepository repository;
+
+  const Home({Key key, @required this.repository}) : super(key: key);
+
+  @override
+  _HomeState createState() => _HomeState();
+
+  @override
+  Widget wrappedRoute(BuildContext context) => MultiBlocProvider(
+        providers: [
+          BlocProvider<WeatherBloc>(
+            create: (_) => WeatherBloc(repository),
+          ),
+          BlocProvider<WeatherSettingsBloc>(
+            create: (_) => WeatherSettingsBloc(repository),
+          ),
+        ],
+        child: this,
+      );
+}
+
+class _HomeState extends State<Home> {
   WeatherBloc weatherBloc;
   WeatherSettingsBloc settingsBloc;
+
   final bottomSheet = WeatherSettingsSheet();
 
   @override
-  Widget build(BuildContext context) {
-    weatherBloc ??= BlocProvider.of<WeatherBloc>(context);
+  void didChangeDependencies() {
+    super.didChangeDependencies();
     settingsBloc ??= BlocProvider.of<WeatherSettingsBloc>(context);
-    weatherBloc.add(GetWeatherEvent());
+    weatherBloc ??= BlocProvider.of<WeatherBloc>(context)
+      ..add(GetWeatherEvent());
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return BlocListener<WeatherSettingsBloc, WeatherSettingsState>(
       listener: (context, state) {
         if (state is WeatherSettingsOpenState) {
@@ -28,9 +58,10 @@ class Home extends StatelessWidget {
       child: BlocBuilder<WeatherSettingsBloc, WeatherSettingsState>(
         builder: (context, state) => Scaffold(
             resizeToAvoidBottomInset: false,
+            extendBodyBehindAppBar: true,
             backgroundColor: Colors.white,
             appBar: AppBar(
-              backgroundColor: Colors.white,
+              backgroundColor: Colors.transparent,
               elevation: 0.0,
               leading: NavDrawerIcon(
                 menuIcon: 'assets/menu.svg',
@@ -38,7 +69,6 @@ class Home extends StatelessWidget {
                 onPressed: () => settingsBloc.add(OpenWeatherSettingsEvent()),
               ),
             ),
-            //drawer: NavDrawer(),
             body: BlocListener<WeatherBloc, WeatherState>(
               listener: (context, state) {
                 if (state is WeatherInitialState) {
@@ -65,14 +95,21 @@ class Home extends StatelessWidget {
     return SpinKitPulse(color: Colors.black38, size: 150.0);
   }
 
-  Widget buildForecast(ForecastViewModel viewModel) {
-    return ForecastWidget(viewModel: viewModel);
+  Widget buildForecast(viewModel) {
+    return ForecastWidget(
+      viewModel: viewModel,
+      onPressed: () => ExtendedNavigator.of(context).pushNamed(
+        Routes.detailsPage,
+        arguments: WeatherDetailsArguments(viewModel: viewModel),
+      ),
+    );
   }
 
   Widget buildError() {
     return Container(
+      margin: EdgeInsets.only(top: 100),
       child: Padding(
-        padding: const EdgeInsets.all(24.0),
+        padding: EdgeInsets.all(24.0),
         child: Column(
           children: [
             SvgPicture.asset(
@@ -120,7 +157,7 @@ class Home extends StatelessWidget {
     );
   }
 
-  openBottomSheet(BuildContext context, String storedCity, String storedUnit) {
+  openBottomSheet(context, storedCity, storedUnit) {
     bottomSheet.show(
       context,
       storedCity,

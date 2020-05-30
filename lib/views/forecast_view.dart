@@ -6,41 +6,45 @@ import 'package:flutter_svg/flutter_svg.dart';
 
 class ForecastWidget extends StatelessWidget {
   final ForecastViewModel viewModel;
+  final Function onPressed;
 
   const ForecastWidget({
     Key key,
     @required this.viewModel,
+    this.onPressed,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Column(
-            children: [
-              Text(
-                viewModel.description,
-                style: TextStyle(
-                  fontSize: 40.0,
-                  color: Colors.black87,
-                  fontWeight: FontWeight.w400,
+    return InkWell(
+      highlightColor: Colors.white10,
+      onTap: () => onPressed(), // handle your onTap here
+      child: Container(
+        margin: EdgeInsets.only(top: 100),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Column(
+              children: [
+                Text(
+                  viewModel.description,
+                  style: TextStyle(
+                    fontSize: 40.0,
+                    color: Colors.black87,
+                    fontWeight: FontWeight.w400,
+                  ),
                 ),
-              ),
-              Text(
-                viewModel.location,
-                style: TextStyle(
-                  fontSize: 20.0,
-                  color: Colors.black38,
-                  fontWeight: FontWeight.w400,
+                Text(
+                  viewModel.location,
+                  style: TextStyle(
+                    fontSize: 20.0,
+                    color: Colors.black38,
+                    fontWeight: FontWeight.w400,
+                  ),
                 ),
-              ),
-            ],
-          ),
-          Visibility(
-            visible: viewModel.temperature.isNotEmpty,
-            child: Column(
+              ],
+            ),
+            Column(
               children: [
                 SvgPicture.asset(
                   viewModel.icon,
@@ -56,12 +60,12 @@ class ForecastWidget extends StatelessWidget {
                 ),
               ],
             ),
-          ),
-          NextDayMiniForecast(
-            temperature: viewModel.nextTemperature,
-            icon: viewModel.nextIcon,
-          ),
-        ],
+            NextDayMiniForecast(
+              temperature: viewModel.nextTemperature,
+              icon: viewModel.nextIcon,
+            ),
+          ],
+        ),
       ),
     );
   }
