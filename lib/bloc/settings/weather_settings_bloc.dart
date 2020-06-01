@@ -3,10 +3,12 @@ import 'dart:async';
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter_weather_app/data/weather_repository.dart';
+import 'package:injectable/injectable.dart';
 
 part 'weather_settings_event.dart';
 part 'weather_settings_state.dart';
 
+@singleton
 class WeatherSettingsBloc
     extends Bloc<WeatherSettingsEvent, WeatherSettingsState> {
   final WeatherRepository repository;

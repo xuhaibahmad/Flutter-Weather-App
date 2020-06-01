@@ -1,14 +1,22 @@
+import 'dart:collection';
+
 import 'package:flutter_weather_app/data/weather_api.dart';
-import 'package:flutter_weather_app/models/forecast_viewmodel.dart';
+import 'package:flutter_weather_app/models/forecast.dart';
 import 'package:flutter_weather_app/utils/secrets_loader.dart';
+import 'package:injectable/injectable.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 const SECRETS_FILE_PATH = "assets/secrets.json";
 const API_KEY = "OpenWeatherApiKey";
 
+@singleton
 class WeatherRepository {
   final WeatherApi api;
   SharedPreferences prefs;
+
+  bool isInitialized = false;
+
+  final memCache = HashMap<String, Forecast>();
 
   WeatherRepository(this.api);
 
@@ -27,6 +35,7 @@ class WeatherRepository {
       final apiKey = secrets[API_KEY];
       api.setApiKey(apiKey);
     }
+    this.isInitialized = true;
   }
 
   updateCity(String city) async {
@@ -37,10 +46,13 @@ class WeatherRepository {
     prefs.setString("unit", unit);
   }
 
-  Future<ForecastViewModel> fetchForecast() async {
+  Future<Forecast> fetchForecast() async {
     try {
-      final forecast = await api.getWeatherForecast(city, unit);
-      return ForecastViewModel.fromForecast(forecast);
+      final forecast = memCache.containsKey(city)
+          ? memCache[city]
+          : await api.getWeatherForecast(city, unit);
+      memCache[city] = forecast;
+      return forecast;
     } catch (e) {
       return Future.error(WeatherError());
     }

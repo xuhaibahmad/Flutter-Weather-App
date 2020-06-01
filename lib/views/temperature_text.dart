@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_weather_app/data/weather_api.dart';
 
 class TemperatureText extends StatelessWidget {
   final String text;
@@ -7,6 +8,8 @@ class TemperatureText extends StatelessWidget {
   final Color colorSecondary;
   final FontWeight fontWeightPrimary;
   final FontWeight fontWeightSecondary;
+  final MainAxisAlignment mainAxisAlignment;
+  final String unit;
 
   const TemperatureText({
     Key key,
@@ -16,12 +19,14 @@ class TemperatureText extends StatelessWidget {
     this.colorSecondary = Colors.black54,
     this.fontWeightPrimary = FontWeight.w400,
     this.fontWeightSecondary = FontWeight.w300,
+    this.mainAxisAlignment = MainAxisAlignment.center,
+    this.unit = CELCIUS,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
+      mainAxisAlignment: mainAxisAlignment,
       children: [
         Text(
           text,
@@ -37,6 +42,17 @@ class TemperatureText extends StatelessWidget {
             fontSize: fontSize,
             color: colorSecondary,
             fontWeight: fontWeightSecondary,
+          ),
+        ),
+        Visibility(
+          visible: unit != null && unit.isNotEmpty,
+          child: Text(
+            unit,
+            style: TextStyle(
+              fontSize: fontSize,
+              color: colorPrimary,
+              fontWeight: fontWeightPrimary,
+            ),
           ),
         ),
       ],

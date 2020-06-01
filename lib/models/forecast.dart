@@ -103,7 +103,9 @@ class Clouds {
 @JsonSerializable()
 class MainClass {
   double temp;
+  @JsonKey(name: "temp_min")
   double tempMin;
+  @JsonKey(name: "temp_max")
   double tempMax;
   double pressure;
   double seaLevel;

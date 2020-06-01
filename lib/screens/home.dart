@@ -1,21 +1,17 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_svg/svg.dart';
+import 'package:flutter_weather_app/bloc/settings/weather_settings_bloc.dart';
 import 'package:flutter_weather_app/bloc/weather/weather_bloc.dart';
-import 'package:flutter_weather_app/bloc/weather_settings/weather_settings_bloc.dart';
-import 'package:flutter_weather_app/data/weather_repository.dart';
+import 'package:flutter_weather_app/di/injection.dart';
 import 'package:flutter_weather_app/router/router.gr.dart';
+import 'package:flutter_weather_app/views/error_view.dart';
+import 'package:flutter_weather_app/views/progress_view.dart';
 import '../views/nav_drawer_icon.dart';
-import 'package:flutter_spinkit/flutter_spinkit.dart';
 import '../views/forecast_view.dart';
 import './weather_settings.dart';
 
 class Home extends StatefulWidget implements AutoRouteWrapper {
-  final WeatherRepository repository;
-
-  const Home({Key key, @required this.repository}) : super(key: key);
-
   @override
   _HomeState createState() => _HomeState();
 
@@ -23,10 +19,10 @@ class Home extends StatefulWidget implements AutoRouteWrapper {
   Widget wrappedRoute(BuildContext context) => MultiBlocProvider(
         providers: [
           BlocProvider<WeatherBloc>(
-            create: (_) => WeatherBloc(repository),
+            create: (_) => getIt<WeatherBloc>(),
           ),
           BlocProvider<WeatherSettingsBloc>(
-            create: (_) => WeatherSettingsBloc(repository),
+            create: (_) => getIt<WeatherSettingsBloc>(),
           ),
         ],
         child: this,
@@ -91,71 +87,17 @@ class _HomeState extends State<Home> {
     );
   }
 
-  Widget buildLoading() {
-    return SpinKitPulse(color: Colors.black38, size: 150.0);
-  }
+  Widget buildLoading() => ProgressView();
 
-  Widget buildForecast(viewModel) {
-    return ForecastWidget(
-      viewModel: viewModel,
-      onPressed: () => ExtendedNavigator.of(context).pushNamed(
-        Routes.detailsPage,
-        arguments: WeatherDetailsArguments(viewModel: viewModel),
-      ),
-    );
-  }
+  Widget buildForecast(viewModel) => ForecastWidget(
+        viewModel: viewModel,
+        onPressed: () =>
+            ExtendedNavigator.of(context).pushNamed(Routes.detailsPage),
+      );
 
-  Widget buildError() {
-    return Container(
-      margin: EdgeInsets.only(top: 100),
-      child: Padding(
-        padding: EdgeInsets.all(24.0),
-        child: Column(
-          children: [
-            SvgPicture.asset(
-              "assets/071-meteor.svg",
-              width: 300,
-              height: 300,
-            ),
-            SizedBox(height: 60),
-            SizedBox(
-              width: double.infinity,
-              child: Text(
-                "Houston, we have a problem!",
-                style: TextStyle(
-                  fontSize: 24.0,
-                  color: Colors.black87,
-                  fontWeight: FontWeight.w400,
-                ),
-              ),
-            ),
-            SizedBox(height: 12),
-            SizedBox(
-              width: double.infinity,
-              child: Text(
-                "Hmm... It looks like either you are not connected to the internet or the selected location is incorrect.",
-                style: TextStyle(
-                  fontSize: 20.0,
-                  color: Colors.black38,
-                  fontWeight: FontWeight.w400,
-                ),
-              ),
-            ),
-            SizedBox(height: 60),
-            SizedBox(
-              width: double.infinity,
-              child: RaisedButton(
-                onPressed: () => settingsBloc.add(OpenWeatherSettingsEvent()),
-                color: Colors.lightBlue,
-                textColor: Colors.white,
-                child: Text("CHANGE LOCATION"),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
+  Widget buildError() => ErrorView(
+        onPressed: () => settingsBloc.add(OpenWeatherSettingsEvent()),
+      );
 
   openBottomSheet(context, storedCity, storedUnit) {
     bottomSheet.show(
