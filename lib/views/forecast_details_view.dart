@@ -5,12 +5,26 @@ import 'package:flutter_weather_app/models/forecast_details_viewmodel.dart';
 import 'package:flutter_weather_app/views/forecast_detail_text_view.dart';
 import 'package:flutter_weather_app/views/temperature_text.dart';
 
-class ForecastDetailsView extends StatelessWidget {
+class ForecastDetailsView extends StatefulWidget {
   final ForecastDetailsViewModel viewModel;
   const ForecastDetailsView({
     Key key,
     @required this.viewModel,
   }) : super(key: key);
+
+  @override
+  _ForecastDetailsViewState createState() => _ForecastDetailsViewState();
+}
+
+class _ForecastDetailsViewState extends State<ForecastDetailsView>
+    with SingleTickerProviderStateMixin {
+  TabController controller;
+
+  @override
+  void initState() {
+    super.initState();
+    controller = TabController(length: 2, vsync: this);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -21,7 +35,7 @@ class ForecastDetailsView extends StatelessWidget {
         mainAxisSize: MainAxisSize.max,
         children: <Widget>[
           Text(
-            viewModel.date,
+            widget.viewModel.date,
             style: TextStyle(
               fontSize: 16.0,
               color: Colors.black38,
@@ -29,7 +43,7 @@ class ForecastDetailsView extends StatelessWidget {
             ),
           ),
           Text(
-            viewModel.location,
+            widget.viewModel.location,
             style: TextStyle(
               fontSize: 20.0,
               color: Colors.black87,
@@ -38,7 +52,7 @@ class ForecastDetailsView extends StatelessWidget {
           ),
           SizedBox(height: 32),
           TemperatureText(
-            text: viewModel.temperature,
+            text: widget.viewModel.temperature,
             colorPrimary: Colors.amber,
             colorSecondary: Colors.amber,
             fontWeightPrimary: FontWeight.w500,
@@ -48,7 +62,7 @@ class ForecastDetailsView extends StatelessWidget {
             unit: CELCIUS,
           ),
           Text(
-            viewModel.description,
+            widget.viewModel.description,
             style: TextStyle(
               fontSize: 28.0,
               color: Colors.black54,
@@ -56,94 +70,221 @@ class ForecastDetailsView extends StatelessWidget {
             ),
           ),
           SizedBox(height: 32),
-          Row(
-            children: <Widget>[
-              FlatButton(
-                onPressed: null,
-                child: Text(
-                  "Today",
-                  style: TextStyle(
-                    fontSize: 20.0,
-                    color: Colors.black87,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-              ),
-              FlatButton(
-                onPressed: null,
-                child: Text(
-                  "This Week",
-                  style: TextStyle(
-                    fontSize: 20.0,
-                    color: Colors.black38,
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-              )
-            ],
-          ),
-          Divider(height: 8, thickness: 1),
-          SizedBox(height: 32),
-          Text(
-            "Temperatures",
-            style: TextStyle(
-              fontSize: 20.0,
-              color: Colors.black87,
-              fontWeight: FontWeight.w500,
+          Container(
+            child: TabBar(
+              controller: controller,
+              indicatorColor: Colors.white,
+              unselectedLabelColor: Colors.black54,
+              labelColor: Colors.black87,
+              tabs: [
+                Text("Today", style: TextStyle(fontSize: 20.0)),
+                Text("This Week", style: TextStyle(fontSize: 20.0)),
+              ],
             ),
           ),
-          SizedBox(height: 24),
-          SizedBox(
-            height: 100,
-            child: ListView.builder(
-              itemCount: viewModel.todayTemps.length,
-              scrollDirection: Axis.horizontal,
-              itemBuilder: (context, index) => buildListItem(index),
+          Expanded(
+            child: TabBarView(
+              controller: controller,
+              children: <Widget>[
+                buildTodayDetails(),
+                buildWeekDetails(),
+              ],
             ),
           ),
-          SizedBox(height: 24),
-          Text(
-            "Details",
-            style: TextStyle(
-              fontSize: 20.0,
-              color: Colors.black87,
-              fontWeight: FontWeight.w500,
-            ),
-          ),
-          SizedBox(height: 24),
-          Row(
-            children: [
-              ForecastDetailTextView(
-                label: "Minimum",
-                value: viewModel.minTemp,
-              ),
-              ForecastDetailTextView(
-                label: "Maximum",
-                value: viewModel.maxTemp,
-              ),
-            ],
-          ),
-          Divider(height: 24, thickness: 1),
-          Row(
-            children: [
-              ForecastDetailTextView(
-                label: "Pressure",
-                value: viewModel.pressure,
-              ),
-              ForecastDetailTextView(
-                label: "Humidity",
-                value: viewModel.humidity,
-              )
-            ],
-          ),
-          Divider(height: 12, thickness: 1),
         ],
       ),
     );
   }
 
-  Widget buildListItem(int index) {
-    final item = viewModel.todayTemps[index];
+  Widget buildWeekDetails() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: <Widget>[
+        Divider(height: 8, thickness: 1),
+        SizedBox(height: 32),
+        Text(
+          "Forecast",
+          style: TextStyle(
+            fontSize: 20.0,
+            color: Colors.black87,
+            fontWeight: FontWeight.w500,
+          ),
+        ),
+        SizedBox(height: 24),
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: <Widget>[
+              Expanded(
+                flex: 2,
+                child: Text(
+                  "Day",
+                  style: TextStyle(
+                    fontSize: 16.0,
+                    color: Colors.black87,
+                    fontWeight: FontWeight.w400,
+                  ),
+                ),
+              ),
+              Expanded(
+                  flex: 1,
+                  child: Text(
+                    "Min",
+                    style: TextStyle(
+                      fontSize: 16.0,
+                      color: Colors.black87,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  )),
+              Expanded(
+                  flex: 1,
+                  child: Text(
+                    "Max",
+                    style: TextStyle(
+                      fontSize: 16.0,
+                      color: Colors.black54,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  )),
+              Expanded(
+                flex: 1,
+                child: Text(""),
+              ),
+            ],
+          ),
+        ),
+        Divider(height: 8, thickness: 1),
+        SizedBox(height: 8),
+        Expanded(
+          child: ListView.builder(
+            itemCount: widget.viewModel.weekTemps.length,
+            scrollDirection: Axis.vertical,
+            itemBuilder: (context, index) => buildWeekForecastListItem(index),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget buildTodayDetails() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: <Widget>[
+        Divider(height: 8, thickness: 1),
+        SizedBox(height: 32),
+        Text(
+          "Temperatures",
+          style: TextStyle(
+            fontSize: 20.0,
+            color: Colors.black87,
+            fontWeight: FontWeight.w500,
+          ),
+        ),
+        SizedBox(height: 24),
+        SizedBox(
+          height: 100,
+          child: ListView.builder(
+            itemCount: widget.viewModel.todayTemps.length,
+            scrollDirection: Axis.horizontal,
+            itemBuilder: (context, index) => buildTodayForecastListItem(index),
+          ),
+        ),
+        SizedBox(height: 24),
+        Text(
+          "Details",
+          style: TextStyle(
+            fontSize: 20.0,
+            color: Colors.black87,
+            fontWeight: FontWeight.w500,
+          ),
+        ),
+        SizedBox(height: 24),
+        Row(
+          children: [
+            ForecastDetailTextView(
+              label: "Minimum",
+              value: widget.viewModel.minTemp,
+            ),
+            ForecastDetailTextView(
+              label: "Maximum",
+              value: widget.viewModel.maxTemp,
+            ),
+          ],
+        ),
+        Divider(height: 24, thickness: 1),
+        Row(
+          children: [
+            ForecastDetailTextView(
+              label: "Pressure",
+              value: widget.viewModel.pressure,
+            ),
+            ForecastDetailTextView(
+              label: "Humidity",
+              value: widget.viewModel.humidity,
+            )
+          ],
+        ),
+        Divider(height: 12, thickness: 1),
+      ],
+    );
+  }
+
+  Widget buildWeekForecastListItem(int index) {
+    final item = widget.viewModel.weekTemps[index];
+    return Padding(
+      padding: EdgeInsets.all(10.0),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: <Widget>[
+          Expanded(
+            flex: 2,
+            child: Text(
+              item.day,
+              style: TextStyle(
+                fontSize: 16.0,
+                color: Colors.black87,
+                fontWeight: FontWeight.w400,
+              ),
+            ),
+          ),
+          Expanded(
+              flex: 1,
+              child: Text(
+                item.minTemp,
+                style: TextStyle(
+                  fontSize: 16.0,
+                  color: Colors.black87,
+                  fontWeight: FontWeight.w500,
+                ),
+              )),
+          Expanded(
+              flex: 1,
+              child: Text(
+                item.maxTemp,
+                style: TextStyle(
+                  fontSize: 16.0,
+                  color: Colors.black54,
+                  fontWeight: FontWeight.w500,
+                ),
+              )),
+          Expanded(
+            flex: 1,
+            child: SvgPicture.asset(
+              item.icon,
+              width: 24,
+              height: 24,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget buildTodayForecastListItem(int index) {
+    final item = widget.viewModel.todayTemps[index];
     return Container(
       margin: EdgeInsets.all(8),
       width: 60.0,
