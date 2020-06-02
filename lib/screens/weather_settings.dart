@@ -13,7 +13,7 @@ class WeatherSettingsSheet {
     String defaultUnit,
     Function onSubmit,
   ) {
-    final isCelcius = unit == CELCIUS;
+    final isCelcius = defaultUnit == CELCIUS;
     controller.text = defaultCity;
     isSelected = [isCelcius, !isCelcius];
     showModalBottomSheet(
