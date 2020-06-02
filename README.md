@@ -1,6 +1,8 @@
 # Flutter Weather
 
-<img src="screenshots/screenshot.png" alt="screenshot" width="270" height="540"/>
+<p align="center">
+<img src="screenshots/Demo.gif" width="250px">
+</p>
 
 ## Table of Contents
 
