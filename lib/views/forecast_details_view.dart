@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:flutter_weather_app/data/weather_api.dart';
 import 'package:flutter_weather_app/models/forecast_details_viewmodel.dart';
 import 'package:flutter_weather_app/views/forecast_detail_text_view.dart';
 import 'package:flutter_weather_app/views/temperature_text.dart';
@@ -65,7 +64,7 @@ class _ForecastDetailsViewState extends State<ForecastDetailsView>
             fontWeightSecondary: FontWeight.w400,
             fontSize: 40.0,
             mainAxisAlignment: MainAxisAlignment.start,
-            unit: CELCIUS,
+            unit: widget.viewModel.unit,
           ),
           Text(
             widget.viewModel.description,
@@ -315,6 +314,7 @@ class _ForecastDetailsViewState extends State<ForecastDetailsView>
           TemperatureText(
             text: item.temperature,
             fontSize: 16,
+            unit: widget.viewModel.unit,
             colorPrimary: Colors.black87,
             colorSecondary: Colors.black87,
             fontWeightPrimary: FontWeight.w700,

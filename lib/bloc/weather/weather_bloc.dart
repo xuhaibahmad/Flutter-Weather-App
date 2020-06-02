@@ -29,7 +29,10 @@ class WeatherBloc extends Bloc<WeatherEvent, WeatherState> {
       yield WeatherLoadingState();
       try {
         final forecast = await repository.fetchForecast();
-        yield WeatherLoadedState(ForecastViewModel.fromForecast(forecast));
+        yield WeatherLoadedState(ForecastViewModel.fromForecast(
+          forecast,
+          repository.unit,
+        ));
       } on WeatherError catch (_) {
         yield WeatherErrorState();
       }

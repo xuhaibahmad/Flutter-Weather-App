@@ -4,11 +4,13 @@ import 'package:flutter_svg/flutter_svg.dart';
 
 class NextDayMiniForecast extends StatelessWidget {
   final String temperature;
+  final String unit;
   final String icon;
 
   const NextDayMiniForecast({
     Key key,
     this.temperature,
+    this.unit,
     this.icon,
   }) : super(key: key);
 
@@ -40,6 +42,7 @@ class NextDayMiniForecast extends StatelessWidget {
             TemperatureText(
               text: this.temperature,
               fontSize: 20.0,
+              unit: unit,
               colorPrimary: Colors.black87,
               fontWeightPrimary: FontWeight.w400,
               colorSecondary: Colors.black54,

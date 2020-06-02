@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_weather_app/bloc/settings/weather_settings_bloc.dart';
 import 'package:flutter_weather_app/bloc/weather/weather_bloc.dart';
 import 'package:flutter_weather_app/di/injection.dart';
+import 'package:flutter_weather_app/models/forecast_viewmodel.dart';
 import 'package:flutter_weather_app/router/router.gr.dart';
 import 'package:flutter_weather_app/views/error_view.dart';
 import 'package:flutter_weather_app/views/progress_view.dart';
@@ -89,7 +90,7 @@ class _HomeState extends State<Home> {
 
   Widget buildLoading() => ProgressView();
 
-  Widget buildForecast(viewModel) => ForecastWidget(
+  Widget buildForecast(ForecastViewModel viewModel) => ForecastWidget(
         viewModel: viewModel,
         onPressed: () =>
             ExtendedNavigator.of(context).pushNamed(Routes.detailsPage),

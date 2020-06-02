@@ -57,11 +57,13 @@ class ForecastWidget extends StatelessWidget {
                 TemperatureText(
                   text: viewModel.temperature,
                   fontSize: 40.0,
+                  unit: viewModel.unit,
                 ),
               ],
             ),
             NextDayMiniForecast(
               temperature: viewModel.nextTemperature,
+              unit: viewModel.unit,
               icon: viewModel.nextIcon,
             ),
           ],

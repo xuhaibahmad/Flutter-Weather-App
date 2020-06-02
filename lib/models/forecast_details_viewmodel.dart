@@ -10,6 +10,7 @@ class ForecastDetailsViewModel extends Equatable {
   final String description;
   final String location;
   final String temperature;
+  final String unit;
   final String minTemp;
   final String maxTemp;
   final String pressure;
@@ -22,6 +23,7 @@ class ForecastDetailsViewModel extends Equatable {
     this.description,
     this.location,
     this.temperature,
+    this.unit,
     this.todayTemps,
     this.weekTemps,
     this.minTemp,
@@ -30,7 +32,8 @@ class ForecastDetailsViewModel extends Equatable {
     this.humidity,
   });
 
-  factory ForecastDetailsViewModel.fromForecast(Forecast forecast) {
+  factory ForecastDetailsViewModel.fromForecast(
+      Forecast forecast, String unit) {
     final date = DateTime.now();
     final today = forecast.list.firstWhere((e) {
       final d = DateTime.fromMillisecondsSinceEpoch(e.dt * 1000);
@@ -42,22 +45,23 @@ class ForecastDetailsViewModel extends Equatable {
       (f) => DateTime.fromMillisecondsSinceEpoch(f.dt * 1000).day,
     );
     final todaysTemps = temps[date.day]
-        .map((w) => TodayForecastViewModel.fromWeather(w))
+        .map((w) => TodayForecastViewModel.fromWeather(w, unit))
         .toList();
     final weekTemps = temps.values
         .map((e) => e.first)
-        .map((w) => WeekForecastViewModel.fromWeather(w))
+        .map((w) => WeekForecastViewModel.fromWeather(w, unit))
         .toList();
 
     return ForecastDetailsViewModel(
       date: DateFormat(DateFormat.ABBR_MONTH_DAY).format(todayDate),
       location: forecast.city.name,
       temperature: today.main.temp.round().toString(),
+      unit: unit,
       description: today.weather.first.description.capitalizeWords(),
       todayTemps: todaysTemps,
       weekTemps: weekTemps,
-      minTemp: "${today.main.tempMin.round()}°C",
-      maxTemp: "${today.main.tempMax.round()}°C",
+      minTemp: "${today.main.tempMin.round()}°$unit",
+      maxTemp: "${today.main.tempMax.round()}°$unit",
       pressure: "${today.main.pressure.round()} Pa",
       humidity: "${today.main.humidity}%",
     );
@@ -69,6 +73,7 @@ class ForecastDetailsViewModel extends Equatable {
         description,
         location,
         temperature,
+        unit,
         todayTemps,
         minTemp,
         maxTemp,
@@ -84,12 +89,12 @@ class TodayForecastViewModel extends Equatable {
 
   TodayForecastViewModel({this.time, this.icon, this.temperature});
 
-  factory TodayForecastViewModel.fromWeather(ListElement element) {
+  factory TodayForecastViewModel.fromWeather(ListElement element, String unit) {
     final date = DateTime.fromMillisecondsSinceEpoch(element.dt * 1000);
     return TodayForecastViewModel(
       time: date.hour > 12 ? "${date.hour - 12} PM" : "${date.hour} AM",
       icon: WeatherIcon.getForWeather(element.weather.first.icon),
-      temperature: "${element.main.temp.round()}",
+      temperature: element.main.temp.round().toString(),
     );
   }
 
@@ -109,7 +114,7 @@ class WeekForecastViewModel extends Equatable {
 
   WeekForecastViewModel({this.day, this.minTemp, this.maxTemp, this.icon});
 
-  factory WeekForecastViewModel.fromWeather(ListElement element) {
+  factory WeekForecastViewModel.fromWeather(ListElement element, String unit) {
     const List<String> dayNames = [
       "Monday",
       "Tuesday",
@@ -122,8 +127,8 @@ class WeekForecastViewModel extends Equatable {
     final date = DateTime.fromMillisecondsSinceEpoch(element.dt * 1000);
     return WeekForecastViewModel(
       day: dayNames[date.weekday - 1],
-      minTemp: "${element.main.temp.round()}°C",
-      maxTemp: "${element.main.temp.round()}°C",
+      minTemp: "${element.main.temp.round()}°$unit",
+      maxTemp: "${element.main.temp.round()}°$unit",
       icon: WeatherIcon.getForWeather(element.weather.first.icon),
     );
   }

@@ -27,8 +27,10 @@ class WeatherDetailsBloc
       yield WeatherDetailsLoadingState();
       try {
         final forecast = await repository.fetchForecast();
-        yield WeatherDetailsLoadedState(
-            ForecastDetailsViewModel.fromForecast(forecast));
+        yield WeatherDetailsLoadedState(ForecastDetailsViewModel.fromForecast(
+          forecast,
+          repository.unit,
+        ));
       } on WeatherError catch (_) {
         yield WeatherDetailsErrorState();
       }

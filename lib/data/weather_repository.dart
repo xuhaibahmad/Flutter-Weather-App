@@ -15,6 +15,7 @@ class WeatherRepository {
   SharedPreferences prefs;
 
   bool isInitialized = false;
+  bool _isUnitChanged = false;
 
   final memCache = HashMap<String, Forecast>();
 
@@ -44,14 +45,16 @@ class WeatherRepository {
 
   updateUnit(String unit) async {
     prefs.setString("unit", unit);
+    _isUnitChanged = true;
   }
 
   Future<Forecast> fetchForecast() async {
     try {
-      final forecast = memCache.containsKey(city)
+      final forecast = memCache.containsKey(city) && !_isUnitChanged
           ? memCache[city]
           : await api.getWeatherForecast(city, unit);
       memCache[city] = forecast;
+      _isUnitChanged = false;
       return forecast;
     } catch (e) {
       return Future.error(WeatherError());

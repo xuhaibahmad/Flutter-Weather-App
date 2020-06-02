@@ -8,6 +8,7 @@ class ForecastViewModel extends Equatable {
   final String description;
   final String location;
   final String temperature;
+  final String unit;
   final String icon;
   final String nextTemperature;
   final String nextIcon;
@@ -17,12 +18,13 @@ class ForecastViewModel extends Equatable {
     this.description,
     this.location,
     this.temperature,
+    this.unit,
     this.icon,
     this.nextTemperature,
     this.nextIcon,
   });
 
-  factory ForecastViewModel.fromForecast(Forecast forecast) {
+  factory ForecastViewModel.fromForecast(Forecast forecast, String unit) {
     final today = forecast.list.first;
     final todayDate = DateTime.fromMillisecondsSinceEpoch(today.dt * 1000);
     final tomorrow = forecast.list.firstWhere((f) {
@@ -38,6 +40,7 @@ class ForecastViewModel extends Equatable {
       location: forecast.city.name,
       description: today.weather.first.description.capitalizeWords(),
       temperature: today.main.temp.round().toString(),
+      unit: unit,
       icon: WeatherIcon.getForWeather(today.weather.first.icon),
       nextTemperature: tomorrow.main.temp.round().toString(),
       nextIcon: WeatherIcon.getForWeather(tomorrow.weather.first.icon),
@@ -50,6 +53,7 @@ class ForecastViewModel extends Equatable {
         description,
         location,
         temperature,
+        unit,
         icon,
         nextTemperature,
         nextIcon,
