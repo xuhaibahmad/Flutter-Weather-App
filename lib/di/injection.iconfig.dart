@@ -12,12 +12,13 @@ import 'package:flutter_weather_app/bloc/details/weather_details_bloc.dart';
 import 'package:get_it/get_it.dart';
 
 void $initGetIt(GetIt g, {String environment}) {
+  g.registerFactory<WeatherDetailsBloc>(
+      () => WeatherDetailsBloc(g<WeatherRepository>()));
+
   //Eager singletons must be registered in the right order
   g.registerSingleton<WeatherApi>(WeatherApi());
   g.registerSingleton<WeatherRepository>(WeatherRepository(g<WeatherApi>()));
   g.registerSingleton<WeatherSettingsBloc>(
       WeatherSettingsBloc(g<WeatherRepository>()));
   g.registerSingleton<WeatherBloc>(WeatherBloc(g<WeatherRepository>()));
-  g.registerSingleton<WeatherDetailsBloc>(
-      WeatherDetailsBloc(g<WeatherRepository>()));
 }

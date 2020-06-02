@@ -21,9 +21,15 @@ class _ForecastDetailsViewState extends State<ForecastDetailsView>
   TabController controller;
 
   @override
-  void initState() {
-    super.initState();
-    controller = TabController(length: 2, vsync: this);
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    controller ??= TabController(length: 2, vsync: this);
+  }
+
+  @override
+  void dispose() {
+    controller.dispose();
+    super.dispose();
   }
 
   @override

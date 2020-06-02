@@ -9,7 +9,7 @@ import 'package:injectable/injectable.dart';
 part 'weather_details_event.dart';
 part 'weather_details_state.dart';
 
-@singleton
+@injectable
 class WeatherDetailsBloc
     extends Bloc<WeatherDetailsEvent, WeatherDetailsState> {
   final WeatherRepository repository;

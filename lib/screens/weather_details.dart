@@ -58,4 +58,10 @@ class _WeatherDetailsState extends State<WeatherDetails> {
       ForecastDetailsView(viewModel: viewModel);
 
   Widget buildError() => ErrorView();
+
+  @override
+  void dispose() {
+    bloc.close();
+    super.dispose();
+  }
 }
