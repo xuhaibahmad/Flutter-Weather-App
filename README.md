@@ -1,12 +1,11 @@
 # Flutter Weather
 
-<p align="center">
-<img src="screenshots/Demo.gif" width="250px">
-</p>
+![Banner](screenshots/banner.png)
 
 ## Table of Contents
 
 - [About](#about)
+- [Demo](#demo)
 - [Getting Started](#getting_started)
 - [Usage](#usage)
 - [Contributing](#contributing)
@@ -16,6 +15,12 @@
 A minimalist weather app built as part of a portfolio item. The main purpose of this project is to learn Flutter and apply best practices to it. While the app is functional, it should only be used as a reference project.
 
 The project uses Bloc for state managment, Auto Route for routing and Injectable for dependency injection.
+
+## Demo
+
+<p align="center">
+<img src="screenshots/Demo.gif" width="250px">
+</p>
 
 ## Getting Started
 
